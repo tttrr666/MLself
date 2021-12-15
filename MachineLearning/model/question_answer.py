@@ -14,7 +14,7 @@ from MachineLearning.model.database import mysqluse
 
 class answersystem:
     mysqldatabase=mysqluse()
-    # 词频
+    # 词频v
     wordtf={}
     # 文本频率
     wordidf={}
@@ -32,12 +32,12 @@ class answersystem:
     def __init__(self):
         print("问答系统启动")
         if self.operating=="saved":
-            self.wordtf=self.load_variavle("system_wordtf.txt")
-            self.wordidf=self.load_variavle("system_wordidf.txt")
-            self.worddict=self.load_variavle("system_worddict.txt")
-            self.alltfidf=self.load_variavle("system_tfidf.txt")
-            self.transported_question=self.load_variavle("system_question.txt")
-            self.question_matrix=self.load_variavle("system_question_martix.txt")
+            self.wordtf=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_wordtf.txt")
+            self.wordidf=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_wordidf.txt")
+            self.worddict=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_worddict.txt")
+            self.alltfidf=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_tfidf.txt")
+            self.transported_question=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_question.txt")
+            self.question_matrix=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_question_martix.txt")
             print("模型载入成功！")
 
 # 输入SQL语句返回问题列表
@@ -231,3 +231,4 @@ class answersystem:
         sql="select answer_content from answers where answer_id="+str(answerid)+";"
         self.mysqldatabase.replacesql(sql)
         print(self.mysqldatabase.outsql()[0][0])
+        return str(self.mysqldatabase.outsql()[0][0])
