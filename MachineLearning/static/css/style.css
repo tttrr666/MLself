@@ -17,7 +17,7 @@ header{
 
 }
 header .back{
-    background-image: url('/static/images/back.png');
+    background-image: url(../img/back.png);
     background-repeat: no-repeat;
     background-size: 15px 26px;
     width: 20px;
@@ -78,7 +78,7 @@ header .title{
 .bot .head{
 	float: left;
 	margin-left: 13px;
-	background-image: url('/static/images/chatbot_head.png');
+	background-image: url(../img/chatbot_head.png);
 }
 .bot .sanjiao{
 	float: left;
@@ -89,7 +89,7 @@ header .title{
 .user .head{
 	float: right;
 	margin-right: 13px;
-	background-image: url('/static/images/chatuser_head.png');
+	background-image: url(../img/chatuser_head.png);
 }
 .user .text{
 	background-color: #9CFF1C;
