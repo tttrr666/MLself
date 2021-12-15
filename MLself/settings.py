@@ -122,18 +122,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-<<<<<<< HEAD
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR,'MachineLearning','static'),
-=======
-    os.path.join(os.path.join(BASE_DIR, 'static').replace('\\','/')),
->>>>>>> c8d7091ee88043c59ce4b6e14d39091267700cdd
+    # os.path.join(os.path.join(BASE_DIR, 'static').replace('\\','/')),
 )
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-<<<<<<< HEAD
 
 # STATIC_ROOT = os.path.join(os.path.dirname(__file__),'static')
 # STATICFILES_DIRS = (
@@ -142,5 +138,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     ('images',os.path.join(STATIC_ROOT,'images').replace('\\','/') ),
 #     ('upload',os.path.join(STATIC_ROOT,'upload').replace('\\','/') ),
 # )
-=======
->>>>>>> c8d7091ee88043c59ce4b6e14d39091267700cdd
