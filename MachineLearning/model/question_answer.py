@@ -1,10 +1,7 @@
 #encoding=utf-8
 import math
 import pickle
-from time import sleep
-
 import jieba
-import numpy
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import cosine
@@ -14,7 +11,7 @@ from MachineLearning.model.database import mysqluse
 
 class answersystem:
     mysqldatabase=mysqluse()
-    # 词频
+    # 词频v
     wordtf={}
     # 文本频率
     wordidf={}
@@ -32,12 +29,12 @@ class answersystem:
     def __init__(self):
         print("问答系统启动")
         if self.operating=="saved":
-            self.wordtf=self.load_variavle("system_wordtf.txt")
-            self.wordidf=self.load_variavle("system_wordidf.txt")
-            self.worddict=self.load_variavle("system_worddict.txt")
-            self.alltfidf=self.load_variavle("system_tfidf.txt")
-            self.transported_question=self.load_variavle("system_question.txt")
-            self.question_matrix=self.load_variavle("system_question_martix.txt")
+            self.wordtf=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_wordtf.txt")
+            self.wordidf=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_wordidf.txt")
+            self.worddict=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_worddict.txt")
+            self.alltfidf=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_tfidf.txt")
+            self.transported_question=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_question.txt")
+            self.question_matrix=self.load_variavle("F:\pythonproject\MLself\MachineLearning\model\system_question_martix.txt")
             print("模型载入成功！")
 
 # 输入SQL语句返回问题列表
@@ -48,12 +45,12 @@ class answersystem:
 # 模型数据的保存
     def save_model(self):
         if self.operating=="save":
-            self.save_variable(self.wordtf,"system_wordtf.txt")
-            self.save_variable(self.wordidf,"system_wordidf.txt")
-            self.save_variable(self.worddict,"system_worddict.txt")
-            self.save_variable(self.alltfidf,"system_tfidf.txt")
-            self.save_variable(self.transported_question,"system_question.txt")
-            self.save_variable(self.question_matrix,"system_question_martix.txt")
+            self.save_variable(self.wordtf,"F:\pythonproject\MLself\MachineLearning\model\system_wordtf.txt")
+            self.save_variable(self.wordidf,"F:\pythonproject\MLself\MachineLearning\model\system_wordidf.txt")
+            self.save_variable(self.worddict,"F:\pythonproject\MLself\MachineLearning\model\system_worddict.txt")
+            self.save_variable(self.alltfidf,"F:\pythonproject\MLself\MachineLearning\model\system_tfidf.txt")
+            self.save_variable(self.transported_question,"F:\pythonproject\MLself\MachineLearning\model\system_question.txt")
+            self.save_variable(self.question_matrix,"F:\pythonproject\MLself\MachineLearning\model\system_question_martix.txt")
             print("保存系统数据成功！")
         else:
             print("保存数据失败")
@@ -69,8 +66,9 @@ class answersystem:
         return seg_list
 # 将分词好的文档进行tfidf词频与文档频率进行统计
     def counttf(self,seg_list):
-        stopwords = [line.strip() for line in
-                     open('../data/stopwords/cn_stopwords.txt', 'r', encoding='utf-8').readlines()]
+        # stopwords = [line.strip() for line in
+        #              open('F:\pythonproject\MLself\MachineLearning\data\stopwords\cn_stopwords.txt', 'r', encoding='utf-8').readlines()]
+        stopwords=[]
         temp=[]
         for word in seg_list:
             if word not in stopwords:
@@ -94,15 +92,19 @@ class answersystem:
         self.wordidf=wordidftemp
 # 问题集的处理
     def cut_questions(self):
-        sql="select count(question_id) from questions;"
+        # sql="select count(question_id) from questions;"
+        sql="select count(idcontent) from financial;"
         self.mysqldatabase.replacesql(sql)
         questionscount=self.mysqldatabase.outsql()[0][0]
-        time=questionscount//10000
+        # time=questionscount//10000
+        time = 1
         for i in range(time):
-            sql=r"select question_content from questions limit "+str(i*10000+1)+","+"10000;"
+            # sql=r"select question_content from questions limit "+str(i*10000+1)+","+"10000;"
+            sql = r"select question from financial;"
             print("分词部分：执行第{}次查询的语句为：".format(i+1),sql)
             questiondata=self.get_questions(sql)
             for sentence in questiondata:
+                print(sentence)
                 seg_list = list(jieba.lcut(str(sentence)))
                 self.counttf(seg_list)
         self.sortwordtfandidf()
@@ -138,7 +140,8 @@ class answersystem:
         self.sortwordtfandidf()
         worddict=[]
         alltfidf={}
-        sql = "select count(question_id) from questions;"
+        # sql = "select count(question_id) from questions;"
+        sql = "select count(idcontent) from financial;"
         self.mysqldatabase.replacesql(sql)
         allidf= self.mysqldatabase.outsql()[0][0]
         alltf=self.count_reslut()
@@ -162,13 +165,16 @@ class answersystem:
     def question_transport(self):
         for i in self.worddict:
             self.transported_question[i]=[]
-        sql = "select count(question_id) from questions;"
+        # sql = "select count(question_id) from questions;"
+        sql = "select count(idcontent) from financial;"
         self.mysqldatabase.replacesql(sql)
         questionscount = self.mysqldatabase.outsql()[0][0]
-        time = questionscount // 10000
+        # time = questionscount // 10000
+        time = 1
         t=1
         for i in range(time):
-            sql=r"select question_content from questions limit "+str(i*10000)+","+"10000;"
+            # sql=r"select question_content from questions limit "+str(i*10000)+","+"10000;"
+            sql = r"select question from financial;"
             print("词向量转化部分：执行第{}次查询的语句为：".format(i + 1), sql)
             questiondata = self.get_questions(sql)
             print(i,len(questiondata))
@@ -222,12 +228,17 @@ class answersystem:
             answer.append(cosine(self.question_matrix[i],questionarray))
             answeradd.append(i)
         a=addre[answer.index(max(answer))]
-        sql="select question_id from questions limit "+str(a)+",1;"
-        self.mysqldatabase.replacesql(sql)
-        questionid=self.mysqldatabase.outsql()[0][0]
-        sql="select answer_id from question_answer where question_id="+str(questionid)+";"
-        self.mysqldatabase.replacesql(sql)
-        answerid=self.mysqldatabase.outsql()[0][0]
-        sql="select answer_content from answers where answer_id="+str(answerid)+";"
+        # sql="select question_id from questions limit "+str(a)+",1;"
+        # self.mysqldatabase.replacesql(sql)
+        # questionid=self.mysqldatabase.outsql()[0][0]
+        # sql="select answer_id from question_answer where question_id="+str(questionid)+";"
+        # self.mysqldatabase.replacesql(sql)
+        # answerid=self.mysqldatabase.outsql()[0][0]
+        # sql="select answer_content from answers where answer_id="+str(answerid)+";"
+        sql = "select question from financial where idcontent=" + str(a+1) + ";"
         self.mysqldatabase.replacesql(sql)
         print(self.mysqldatabase.outsql()[0][0])
+        sql = "select answer from financial where idcontent=" + str(a + 1) + ";"
+        self.mysqldatabase.replacesql(sql)
+        print(self.mysqldatabase.outsql()[0][0])
+        return str(self.mysqldatabase.outsql()[0][0])

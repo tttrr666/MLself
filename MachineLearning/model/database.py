@@ -35,6 +35,7 @@ class mysqluse:
     def replacesql(self,sql):
         if sql:
             self.sqlwords = sql
+            print(sql)
         else:
             print("请输入SQL语句，不要输入空字符串。")
 
