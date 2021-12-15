@@ -12,10 +12,6 @@ a=answersystem()
 # a.question_transport()
 # a.matrix()
 # a.save_model()
-<<<<<<< HEAD
-=======
-
->>>>>>> c8d7091ee88043c59ce4b6e14d39091267700cdd
 # print(len(a.transported_question["治疗"]))
 # print(a.transported_question.keys())
 print(a.worddict)
