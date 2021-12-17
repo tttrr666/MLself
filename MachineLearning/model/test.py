@@ -6,7 +6,7 @@ a=answersystem()
 # 统计图展示
 # a.showplot()
 # 处理低频词汇
-# a.wordtfidf(1000)
+# a.wordtfidf(1)
 # # 模型保存
 # a.save_model()
 # a.question_transport()
@@ -14,7 +14,9 @@ a=answersystem()
 # a.save_model()
 # print(len(a.transported_question["治疗"]))
 # print(a.transported_question.keys())
-print(a.worddict)
+# print(a.worddict)
+# for i in a.transported_question:
+#     print(a.transported_question[i])
 for i in range(10):
     question=input("输入问题：")
     a.question_answer(question)
