@@ -1,4 +1,6 @@
+import math
 import pickle
+import numpy as np
 
 from MachineLearning.FAQsystem.startjieba import startjieba
 from MachineLearning.model.database import mysqluse
@@ -66,7 +68,10 @@ class system:
         question_list=self.cut_sentense.all_cut(question)
         question_list=self.cut_stop_words(question_list)
         count=1
+        temp=[]
         for i in question_list:
+            if i not in temp:
+                temp.append(i)
             if i not in self.system_tfidf.keys():
                 self.system_tfidf[i]=0
                 estable={}
@@ -77,29 +82,82 @@ class system:
             else:
                 estable1=self.system_ES[i][2]
                 tempcount=self.system_ES[i][1]+1
+                doccount=self.system_ES[i][0]
                 if docfile in estable1.keys():
                     # ******************
-                    estable1[docfile][0]+=1
-                    estable1[docfile][1].append(count)
+                    estable1[docfile].append(count)
                     self.allword+=1
                     count+=1
                 else:
-                    estable1[docfile]=[1,[count]]
+                    estable1[docfile]=[count]
                     self.allword+=1
                     count+=1
-            self.alldoc+=1
+                self.system_ES[i]=[doccount,tempcount,estable1]
+        for i in temp:
+            self.system_ES[i][0]+=1
+        self.alldoc+=1
     # 停用词处理
     def cut_stop_words(self,seglist):
         seg_list=[]
-        stopwords = [line.strip() for line in
-                     open('F:\pythonproject\MLself\MachineLearning\data\stopwords\cn_stopwords.txt',
-                          'r', encoding='utf-8').readlines()]
+        # stopwords = [line.strip() for line in
+        #              open('F:\pythonproject\MLself\MachineLearning\data\stopwords\cn_stopwords.txt',
+        #                   'r', encoding='utf-8').readlines()]
+        stopwords=[]
         for i in seglist:
-            if i not in seglist:
+            if i not in stopwords:
                 seg_list.append(i)
             else:
                 print("stopwords:",i)
         return seg_list
-    def limit_low_words(self):
-        for i in self.system_ES:
-            a=i[1]
+    # 低频词语处理
+    def limit_low_words(self,limitimes):
+        for i in self.system_ES.keys():
+            a=self.system_ES[i][1]
+            if a < limitimes:
+                self.allword-=self.system_ES[i][1]
+                self.alldoc-=self.system_ES[i][0]
+                self.system_ES.pop(i)
+                self.system_tfidf.pop(i)
+    # 计算tfidf
+    def word_tfidf(self):
+        for i in self.system_ES.keys():
+            self.system_tfidf[i]=(self.system_ES[i][1]/self.allword)*\
+                                 (math.log((self.alldoc/self.system_ES[i][0]+1),math.e))
+    # 根据问题建立数据集中的向量化
+    def get_ES_result(self,word):
+        word_get=[]
+        for i in word:
+            temp=[i,self.system_ES[i][1],self.system_ES[i][2],self.system_ES[i][0]]
+            word_get.append(temp)
+        word_get=np.array(word_get)
+        word_get=np.lexsort(-word_get.T)
+
+
+
+    # 问题向量化
+    def userquestion(self,question):
+        result=self.cut_sentense.questioncut(question)
+        question_word=[]
+        question_tfidf=[]
+        for i in result.keys():
+            if i in self.system_tfidf.keys():
+                question_word.append(i)
+                question_tfidf.append(self.system_tfidf[i] * result[i])
+        datalist=self.get_ES_result(question_word)
+    def cosVector(x, y):
+        if (len(x) != len(y)):
+            print('error input,x and y is not in the same space')
+            return;
+        result1 = 0.0;
+        result2 = 0.0;
+        result3 = 0.0;
+        for i in range(len(x)):
+            result1 += x[i] * y[i]  # sum(X*Y)
+            result2 += x[i] ** 2  # sum(X*X)
+            result3 += y[i] ** 2  # sum(Y*Y)
+        # print(result1)
+        # print(result2)
+        # print(result3)
+        cosresult= result1 / ((result2 * result3) ** 0.5)
+        return cosresult
+
