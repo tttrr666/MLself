@@ -13,3 +13,12 @@ class startjieba:
     def all_lcut(self,sentense):
         words=jieba.lcut(sentense)
         return list(words)
+    def questioncut(self,sentense):
+        word=list(jieba.cut_for_search(sentense))
+        result={}
+        for i in word:
+            if i in result:
+                result[i]+=1
+            else:
+                result[i]=1
+        return result
