@@ -127,12 +127,33 @@ class system:
     def get_ES_result(self,word):
         word_get=[]
         for i in word:
-            temp=[i,self.system_ES[i][1],self.system_ES[i][2],self.system_ES[i][0]]
+            temp=[i,self.system_ES[i][0],self.system_ES[i][1],self.system_ES[i][2]]
             word_get.append(temp)
-        word_get=np.array(word_get)
-        word_get=np.lexsort(-word_get.T)
+        word_get=self.sortmartix(word_get)
+        word_dict=[]
+        doc_list=[]
+        sentense_martix=[]
+        for i in word_get:
+            word_dict.append(i[0])
+            temp=i[3].keys()
+            for i in temp:
+                if i not in doc_list:
+                    doc_list.append(i)
+        for i in doc_list:
+            single_doc=[]
+            for j in word_dict:
+                a=self.system_ES[j][2]
+                if i in a.keys():
+                    single_doc.append(self.system_tfidf[j]*(len(self.system_ES[j][2][i])))
+                else:
+                    single_doc.append(0)
+            sentense_martix.append(single_doc)
+        return doc_list,sentense_martix
 
 
+    def sortmartix(self,estable):
+        resultestable=sorted(estable,key=lambda docidf:docidf[1],reverse=True)
+        return resultestable
 
     # 问题向量化
     def userquestion(self,question):
@@ -143,8 +164,18 @@ class system:
             if i in self.system_tfidf.keys():
                 question_word.append(i)
                 question_tfidf.append(self.system_tfidf[i] * result[i])
-        datalist=self.get_ES_result(question_word)
-    def cosVector(x, y):
+        doc_list,doc_martix=self.get_ES_result(question_word)
+        doc_rank=[]
+        for i in doc_martix:
+            doc_rank.append(self.cosVector(i,question_tfidf))
+        question_id=doc_list[doc_rank.index(max(doc_rank))]
+        sql="select answer from financial where idcontent="+str(question_id)+";"
+        self.sqlconnect.replacesql(sql)
+        answer =self.sqlconnect.outsql()[0][0]
+        print(answer)
+        return answer
+
+    def cosVector(self,x, y):
         if (len(x) != len(y)):
             print('error input,x and y is not in the same space')
             return;
