@@ -34,17 +34,9 @@
                         "name":name,
                         "passwd":passwd,
                     },
-                    success:function(e){
-                        if(e.msg=='exist'){
-                            window.location='/chat'
-                        }
-                        console.log(e)
-                    },
-                    error:function (e) {
-                        if(e.msg=='exist'){
-                            window.location='/chat'
-                        }
-                        console.log(e)
+                    success:function(e) {
+                        var newurl=e["url"];
+                        window.location.href=newurl;
                     }
                 });
             }

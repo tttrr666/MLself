@@ -12,5 +12,5 @@ urlpatterns = [
     path('chat',views.chatpage),
     path('success',views.success),
     path('question',views.question),
-    path('answer',views.return_answer),
+    # path('answer',views.return_answer),
 ]
