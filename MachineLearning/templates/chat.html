@@ -64,21 +64,23 @@ function textSubmit(){
             "question":document.getElementById('jianpan').value
         },
         success:function (e) {
-            iw.loadClose()
+            iw.loadClose();
+            var answer="";
+            answer=e["answer"];
+            if(answer!=null){
+                huifu(answer);
+            }
+            else {
+                huifu();
+            }
+        },
+        error:function (e) {
+            console.log(e)
         }
     })
     //清空内容区域
     document.getElementById('jianpan').value = '';
 }
-$.ajax({
-    url: "answer",
-    type: "get",
-    data: {},
-    success: function (data) {
-        var data1 = {{ answer|safe }}
-            console.log(data)
-    }
-})
 </script>
 <style>
 	#se-knowledge>p{padding:0 !important;margin:0 !important;}
