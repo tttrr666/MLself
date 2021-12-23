@@ -63,8 +63,11 @@ class system:
     # 对数据库中拿到的句子进行倒排
     def create_es(self,single_data):
         docfile=single_data[0]
+        # 文档ID
         question=single_data[1]
+        # 问题
         answer=single_data[2]
+        # 答案
         question_list=self.cut_sentense.all_cut(question)
         question_list=self.cut_stop_words(question_list)
         count=1
@@ -96,6 +99,7 @@ class system:
         for i in temp:
             self.system_ES[i][0]+=1
         self.alldoc+=1
+        # 输出总词频，总文档数目，ES表，tfidf表（值为空）
     # 停用词处理
     def cut_stop_words(self,seglist):
         seg_list=[]
