@@ -32,7 +32,8 @@ class tfidf:
         self.sqlconnect.replacesql(sql)
         count=self.sqlconnect.outsql()[0][0]
         if count <= 10000:
-            sql = "select idcontent,question,answer,label from "+tablename+";"
+            sql = "select idcontent,question,answer from "+tablename+";"
+            # , label
             self.sqlconnect.replacesql(sql)
             sqldata = self.sqlconnect.outsqls()
             for i in sqldata:
@@ -55,7 +56,7 @@ class tfidf:
         # 问题
         answer = single_data[2]
         # 答案
-        label=single_data[3]
+        # label=single_data[3]
         # 用户情感标签
         question_list = self.cut_sentense.all_cut(question)
         # 分词
@@ -142,3 +143,12 @@ class tfidf:
             else:
                 print("stopwords:",i)
         return seg_list
+    def sortmartix(self):
+        estable=[]
+        for i in self.system_ES:
+            estable.append([i,self.system_ES[i][0],self.system_ES[i][1],self.system_ES[i][2]])
+        resultestable=sorted(estable,key=lambda docidf:docidf[1],reverse=True)
+        new_es_dict = {}
+        for i in resultestable:
+            new_es_dict[i[0]]=[i[1],i[2],i[3]]
+        self.system_ES=new_es_dict
